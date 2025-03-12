@@ -6,7 +6,7 @@ const {
     passwordResetRequest,
     passwordReset
 } = require('../controller/UserController');
-const userValidation = require('../validators/userValidator');
+const userValidation = require('../validators/UserValidator');
 
 // post에서 req를 json 형태로 받기 위해
 router.use(express.json());
