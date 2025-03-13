@@ -12,3 +12,37 @@ VALUES ("흥부와 놀부들", "종이책", 3, "제비..", "까만 제비..", "�
 
 INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author, pages, contents, price, pub_date)
 VALUES ("콩쥐 팥쥐", 4, 0, "ebook", 4, "콩팥..", "콩심은데 콩나고..", "김콩팥", 100, "목차입니다.", 20000, "2025-03-07");
+
+/* books 테이블이 FK로 category 테이블의 PK를 가지고 있으므로
+books 테이블을 기준으로 조인 */
+SELECT * FROM books LEFT JOIN category 
+ON books.category_id = category.id;
+
+/* 조인 후 books 테이블의 id값이 1인 열만 셀렉 */
+SELECT * FROM books LEFT JOIN category 
+ON books.category_id = category.id
+WHERE books.id = 1;
+
+INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author, pages, contents, price, pub_date)
+VALUES ("용궁에 간 토끼", 5, 1, "종이책", 5, "깡충..", "용왕님 하이..", "김거북", 100, "목차입니다.", 20000, "2024-10-01");
+
+INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author, pages, contents, price, pub_date)
+VALUES ("해님달님", 15, 2, "ebook", 6, "동앗줄..", "황금 동앗줄..!", "김해님", 100, "목차입니다.", 20000, "2024-07-16");
+
+INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author, pages, contents, price, pub_date)
+VALUES ("장화홍련전", 80, 0, "ebook", 7, "기억이 안나요..", "장화와 홍련이?..", "김장화", 100, "목차입니다.", 20000, "2024-03-01");
+
+INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author, pages, contents, price, pub_date)
+VALUES ("견우와 직녀", 8, 1, "ebook", 8, "오작교!!", "칠월 칠석!!", "김다리", 100, "목차입니다.", 20000, "2025-02-01");
+
+INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author, pages, contents, price, pub_date)
+VALUES ("효녀 심청", 12, 0, "종이책", 9, "심청아..", "공양미 삼백석..", "김심청", 100, "목차입니다.", 20000, "2025-01-15");
+
+INSERT INTO books (title, img, category_id, form, isbn, summary, detail, author, pages, contents, price, pub_date)
+VALUES ("혹부리 영감", 22, 2, "ebook", 10, "노래 주머니..", "혹 두개 되어버림..", "김영감", 100, "목차입니다.", 20000, "2024-06-05");
+
+/* books 테이블에서 오늘로부터 1개월 전과 오늘 날짜의 사이(오늘로부터 1개월 전 ~ 오늘)
+그리고 category_id가 0인 것을 셀렉 */
+SELECT * FROM books
+WHERE category_id = 0
+AND  DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW();
