@@ -1,42 +1,53 @@
 const conn = require('../mariadb'); // db 모듈
 const {StatusCodes} = require('http-status-codes'); // http status code 모듈
 
+// (카테고리별, 신간 여부) 전체 도서 목록 조회
+// 전체 도서 목록 조회에서는 카테고리(소설, 동화, 사회) join 안 함 나중에 해주기
 const allBooks = (req, res) => {
-    let {category_id} = req.query;
+    let { category_id, news, limit, currentPage } = req.query;
 
-    if (category_id) {
-        let sql = `SELECT * FROM books WHERE category_id = ?`;
-        conn.query(sql, category_id, 
-            (err, results) => {
-            if (err) {
-                console.log(err);
-                return res.status(StatusCodes.BAD_REQUEST).end();
-            }
+    // limit : page 당 도서 수      ex. 3
+    // currentPage : 현재 몇 페이지 ex. 1, 2, 3, ...
+    // offset :                    ex. 0, 3, 6, 9, 12, ...
+    //                             limit * (currentPage-1)
+    let offset = limit * (currentPage - 1);
 
-            if (results.length)
-                return res.status(StatusCodes.OK).json(results);
-            else
-                return res.status(StatusCodes.NOT_FOUND).end();
-        })
-    } else {
-        // (요약된) 전체 도서 리스트
-        let sql = `SELECT * FROM books`;
-        conn.query(sql, (err, results) => {
-            if (err) {
-                console.log(err);
-                return res.status(StatusCodes.BAD_REQUEST).end();
-            }
-
-            return res.status(StatusCodes.OK).json(results);
-        })
+    let sql = `SELECT * FROM books`;  // 뒤에 아무것도 붙지 않으면 전체 조회
+    let values = [];
+    if (category_id && news) {  // 카테고리별 신간 조회
+        sql += ` WHERE category_id = ? AND pub_date BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()`;
+        values = [category_id];
+    } else if (category_id) {   // 카테고리별 조회
+        sql += ` WHERE category_id = ?`;
+        values = [category_id];
+    } else if (news) {  // 신간 조회
+        sql += ` WHERE pub_date BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()`;
     }
+
+    sql += ` LIMIT ? OFFSET ?`;
+    values.push(parseInt(limit), offset);
+
+    conn.query(sql, values, 
+        (err, results) => {
+        if (err) {
+            console.log(err);
+            return res.status(StatusCodes.BAD_REQUEST).end();
+        }
+
+        if (results.length)
+            return res.status(StatusCodes.OK).json(results);
+        else
+            return res.status(StatusCodes.NOT_FOUND).end();
+    })
 };
 
 const bookDetail = (req, res) => {
     let {id} = req.params;
     id = parseInt(id);
 
-    let sql = `SELECT * FROM books WHERE id = ?`;
+    let sql = `SELECT * FROM books LEFT JOIN category 
+                ON books.category_id = category.id
+                WHERE books.id = ?;`;
     conn.query(sql, id, 
         (err, results) => {
         if (err) {
