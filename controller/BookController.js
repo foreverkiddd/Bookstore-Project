@@ -12,13 +12,14 @@ const allBooks = (req, res) => {
     //                             limit * (currentPage-1)
     let offset = limit * (currentPage - 1);
 
-    let sql = `SELECT * FROM books`;  // 뒤에 아무것도 붙지 않으면 전체 조회
+    let sql = `SELECT * FROM books
+                LEFT JOIN category ON books.category_id = category.category_id`;  // 뒤에 아무것도 붙지 않으면 전체 조회
     let values = [];
     if (category_id && news) {  // 카테고리별 신간 조회
-        sql += ` WHERE category_id = ? AND pub_date BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()`;
+        sql += ` WHERE books.category_id = ? AND pub_date BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()`;
         values = [category_id];
     } else if (category_id) {   // 카테고리별 조회
-        sql += ` WHERE category_id = ?`;
+        sql += ` WHERE books.category_id = ?`;
         values = [category_id];
     } else if (news) {  // 신간 조회
         sql += ` WHERE pub_date BETWEEN DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW()`;
@@ -46,8 +47,8 @@ const bookDetail = (req, res) => {
     id = parseInt(id);
 
     let sql = `SELECT * FROM books LEFT JOIN category 
-                ON books.category_id = category.id
-                WHERE books.id = ?;`;
+                ON books.category_id = category.category_id
+                WHERE books.id = ?`;
     conn.query(sql, id, 
         (err, results) => {
         if (err) {
