@@ -46,3 +46,23 @@ VALUES ("혹부리 영감", 22, 2, "ebook", 10, "노래 주머니..", "혹 두�
 SELECT * FROM books
 WHERE category_id = 0
 AND  DATE_SUB(NOW(), INTERVAL 1 MONTH) AND NOW();
+
+/* 좋아요 추가 */
+INSERT INTO likes (user_id, liked_book_id) VALUES (1, 1);
+INSERT INTO likes (user_id, liked_book_id) VALUES (1, 2);
+INSERT INTO likes (user_id, liked_book_id) VALUES (1, 3);
+INSERT INTO likes (user_id, liked_book_id) VALUES (3, 1);
+INSERT INTO likes (user_id, liked_book_id) VALUES (4, 4);
+INSERT INTO likes (user_id, liked_book_id) VALUES (2, 1);
+INSERT INTO likes (user_id, liked_book_id) VALUES (2, 2);
+INSERT INTO likes (user_id, liked_book_id) VALUES (2, 3);
+INSERT INTO likes (user_id, liked_book_id) VALUES (2, 5);
+
+/* 좋아요 삭제 */
+DELETE FROM likes
+WHERE user_id = 1 AND liked_book_id = 3;
+
+/* 좋아요 개수가 포함된 books 테이블 조회 */
+SELECT *,
+(SELECT count(*) FROM likes WHERE liked_book_id = books.id) AS likes 
+FROM books;
