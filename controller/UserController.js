@@ -47,12 +47,14 @@ const login = (req, res) => {
             if (loginUser && loginUser.password == hashPassword) {
                 // token 발행
                 const token = jwt.sign({
-                    email : loginUser.email,
+                    id : loginUser.id,
+                    email : loginUser.email
                 }, process.env.PRIVATE_KEY, {
-                    expiresIn : '30m',
+                    expiresIn : '1m',
                     issuer : "JungEun"
                 });
 
+                // 토큰 쿠키에 담기
                 res.cookie("token", token, {
                     httpOnly : true
                 });
