@@ -1,8 +1,7 @@
+const ensureAuthorization = require('../auth');  // 인증 모듈
 const jwt = require('jsonwebtoken');
 const conn = require('../mariadb'); // db 모듈
 const {StatusCodes} = require('http-status-codes'); // http status code 모듈
-const dotenv = require('dotenv');  // dotenv 모듈
-dotenv.config();
 
 const addLike = (req, res) => {
     const book_id = req.params.id;
@@ -20,7 +19,7 @@ const addLike = (req, res) => {
     } else {
         let sql = `INSERT INTO likes (user_id, liked_book_id)
                 VALUES (?, ?)`;
-        let values = [authorization.id, id];
+        let values = [authorization.id, book_id];
         conn.query(sql, values,
             (err, results) => {
                 if (err) {
@@ -63,23 +62,6 @@ const removeLike = (req, res) => {
         )
     }
 };
-
-function ensureAuthorization(req, res) {
-    try {
-        let receivedJwt = req.headers["authorization"];
-        console.log("receivedJwt : ", receivedJwt);
-
-        let decodedJwt = jwt.verify(receivedJwt, process.env.PRIVATE_KEY);
-        console.log(decodedJwt);
-
-        return decodedJwt;
-    } catch (err) {
-        console.log(err.name);
-        console.log(err.message);
-        
-        return err;
-    }
-}
 
 module.exports = {
     addLike,
