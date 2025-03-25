@@ -38,9 +38,17 @@ const allBooks = (req, res) => {
             return res.status(StatusCodes.BAD_REQUEST).end();
         }
         console.log(results);
-        if (results.length)
+        if (results.length) {
+            results.map(function (result) {
+                result.pubDate = result.pub_date;
+                delete result.pub_date;
+                result.categoryId = result.category_id;
+                delete result.category_id;
+                result.categoryName = result.category_name;
+                delete result.category_name;
+            });
             allBooksRes.books = results;
-        else
+        } else
             return res.status(StatusCodes.NOT_FOUND).end();
     })
 
@@ -92,9 +100,17 @@ const bookDetail = (req, res) => {
             }
 
             // id 값으로 해당 도서가 있는지 확인
-            if (results[0])
+            if (results[0]) {
+                results.map(function (result) {
+                    result.pubDate = result.pub_date;
+                    delete result.pub_date;
+                    result.categoryId = result.category_id;
+                    delete result.category_id;
+                    result.categoryName = result.category_name;
+                    delete result.category_name;
+                });
                 return res.status(StatusCodes.OK).json(results[0]);
-            else
+            } else
                 return res.status(StatusCodes.NOT_FOUND).end();
         })
     } else {  // 로그인 상태이면? liked 추가해서
@@ -115,11 +131,18 @@ const bookDetail = (req, res) => {
                 return res.status(StatusCodes.BAD_REQUEST).end();
             }
 
-
             // id 값으로 해당 도서가 있는지 확인
-            if (results[0])
+            if (results[0]) {
+                results.map(function (result) {
+                    result.pubDate = result.pub_date;
+                    delete result.pub_date;
+                    result.categoryId = result.category_id;
+                    delete result.category_id;
+                    result.categoryName = result.category_name;
+                    delete result.category_name;
+                });
                 return res.status(StatusCodes.OK).json(results[0]);
-            else
+            } else
                 return res.status(StatusCodes.NOT_FOUND).end();
         })
     }
