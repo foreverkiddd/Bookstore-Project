@@ -17,6 +17,7 @@ const addToCart = (req, res) => {
         return res.status(StatusCodes.BAD_REQUEST).json({
             "message" : "잘못된 토큰입니다."
         });
+        
     } else {
         let sql = `INSERT INTO cartItems (book_id, quantity, user_id)
                     VALUES (?, ?, ?)`;

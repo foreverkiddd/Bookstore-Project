@@ -53,7 +53,7 @@ const login = (req, res) => {
                     id : loginUser.id,
                     email : loginUser.email
                 }, process.env.PRIVATE_KEY, {
-                    expiresIn : '10m',
+                    expiresIn : '30m',
                     issuer : "JungEun"
                 });
 
@@ -61,9 +61,9 @@ const login = (req, res) => {
                 res.cookie("token", token, {
                     httpOnly : true
                 });
-                console.log(token);
+                
 
-                return res.status(StatusCodes.OK).json(results);
+                return res.status(StatusCodes.OK).json({ ...results[0], token: token});
             } else {
                 return res.status(StatusCodes.UNAUTHORIZED).end();  // 401
             }

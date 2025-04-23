@@ -37,37 +37,34 @@ const allBooks = (req, res) => {
             console.log(err);
             return res.status(StatusCodes.BAD_REQUEST).end();
         }
-        console.log(results);
+        
         if (results.length) {
             results.map(function (result) {
                 result.pubDate = result.pub_date;
                 delete result.pub_date;
-                result.categoryId = result.category_id;
-                delete result.category_id;
-                result.categoryName = result.category_name;
-                delete result.category_name;
             });
             allBooksRes.books = results;
-        } else
+        
+            sql = `SELECT found_rows()`;
+            conn.query(sql,
+                (err, results) => {
+                if (err) {
+                    console.log(err);
+                    return res.status(StatusCodes.BAD_REQUEST).end();
+                }
+
+                let pagination = {};
+                pagination.currentPage = parseInt(currentPage);
+                pagination.totalCount = results[0]["found_rows()"];
+
+                allBooksRes.pagination = pagination;
+
+                return res.status(StatusCodes.OK).json(allBooksRes);
+            })
+        } else {
             return res.status(StatusCodes.NOT_FOUND).end();
-    })
-
-    sql = `SELECT found_rows()`;
-    conn.query(sql,
-        (err, results) => {
-        if (err) {
-            console.log(err);
-            return res.status(StatusCodes.BAD_REQUEST).end();
         }
-
-        let pagination = {};
-        pagination.currentPage = parseInt(currentPage);
-        pagination.totalCount = results[0]["found_rows()"];
-
-        allBooksRes.pagination = pagination;
-
-        return res.status(StatusCodes.OK).json(allBooksRes);
-    })
+    });
 };
 
 const bookDetail = (req, res) => {
